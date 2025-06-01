@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>六一快乐</title>
+    <style>
+        body {
+            background: url('https://raw.githubusercontent.com/Prl2019/happy-childrens-day/main/HTML.jpg') center/cover no-repeat;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            perspective: 1000px;
+        }
+
+        .greeting-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transform-style: preserve-3d;
+            animation: rotateZ 15s linear infinite;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem; /* 调整图片与文字的间距 */
+        }
+
+        .greeting {
+            font-size: clamp(1.5rem, 5vw, 3rem);
+            text-align: center;
+            font-family: 'Arial', sans-serif;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            opacity: 0;
+            animation: fadeIn 1.5s ease-out forwards;
+        }
+
+        .accompanying-image {
+            width: 120px; /* 调整图片大小 */
+            height: 120px;
+            object-fit: contain;
+            z-index: 2;
+            filter: drop-shadow(0 0 15px rgba(0,0,0,0.6));
+            transform: translateZ(50px); /* 增加Z轴深度 */
+        }
+
+        /* 星星样式 */
+        .star {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            animation: fall 4s linear infinite;
+            box-shadow: 0 0 10px rgba(255,255,255,0.8);
+        }
+
+        /* 花瓣样式 */
+        .petal {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: pink;
+            border-radius: 150% 0 150% 0;
+            animation: fall 6s linear infinite;
+        }
+
+        /* 爱心样式 */
+        .heart {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background: red;
+            animation: fall 8s linear infinite;
+            transform: rotate(45deg);
+        }
+
+        .heart:before, .heart:after {
+            content: '';
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background: red;
+            border-radius: 50%;
+        }
+
+        .heart:before {
+            top: -7.5px;
+            left: 0;
+        }
+
+        .heart:after {
+            top: 0;
+            left: -7.5px;
+        }
+
+        @keyframes fall {
+            0% { top: -20px; opacity: 1; }
+            100% { top: 100vh; opacity: 0; }
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(-10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes rotateZ {
+            0% { transform: translate(-50%, -50%) rotateY(0deg); }
+            100% { transform: translate(-50%, -50%) rotateY(-360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="greeting-container">
+        <img src="https://raw.githubusercontent.com/Prl2019/happy-childrens-day/main/03.jpg" alt="伴生图片" class="accompanying-image">
+        <div class="greeting" id="msg">祝高泽林小朋友六一儿童节快乐</div>
+    </div>
+
+    <script>
+        // 文字七彩交替效果
+        const colors = ['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'violet'];
+        let colorIndex = 0;
+        const textElement = document.getElementById('msg');
+
+        // 启动文字颜色变化动画
+        setInterval(() => {
+            colorIndex = (colorIndex + 1) % colors.length;
+            textElement.style.color = colors[colorIndex];
+        }, 500);
+
+        // 自动生成星星、花瓣和爱心
+        function createParticle(type) {
+            const particle = document.createElement('div');
+            particle.className = type;
+            
+            // 随机位置和延迟
+            const left = Math.random() * 100;
+            const delay = Math.random() * 5;
+            const size = Math.random() * 10 + (type === 'star' ? 8 : type === 'petal' ? 10 : 12);
+            
+            // 随机颜色
+            if (type === 'petal') {
+                const petalsColors = ['pink', 'lightpink', 'hotpink', 'deeppink', 'lavenderblush'];
+                particle.style.background = petalsColors[Math.floor(Math.random() * petalsColors.length)];
+            } else if (type === 'heart') {
+                const heartColors = ['red', 'crimson', 'tomato', 'coral', 'indianred'];
+                particle.style.background = heartColors[Math.floor(Math.random() * heartColors.length)];
+                particle.style.boxShadow = `0 0 15px ${heartColors[Math.floor(Math.random() * heartColors.length)]}`;
+            }
+
+            // 设置样式
+            particle.style.left = `${left}vw`;
+            particle.style.animationDelay = `${delay}s`;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            
+            document.body.appendChild(particle);
+            
+            // 自动移除粒子，避免DOM过载
+            setTimeout(() => {
+                particle.remove();
+            }, 10000);
+        }
+
+        // 初始批量生成
+        for (let i = 0; i < 20; i++) {
+            setTimeout(() => {
+                createParticle('star');
+                createParticle('petal');
+                createParticle('heart');
+            }, i * 150); // 错开创建时间，避免集中渲染
+        }
+
+        // 持续生成新粒子
+        setInterval(() => {
+            createParticle('star');
+            setTimeout(() => createParticle('petal'), 200);
+            setTimeout(() => createParticle('heart'), 400);
+        }, 500);
+    </script>
+</body>
+</html>
